@@ -4,15 +4,16 @@ class UsersController < ApplicationController
 
     def create
         user = User.new(user_params)
-        if user.save!
+        user.school_id = params[:school_id]
+        if user.save
             render json: user, status: :ok
         else 
-            render json: user.errors, status: :fail
+            render json: user.errors, status: :not_acceptable
         end 
     end 
 
 
     def user_params 
-        params.require(:user).permit(:username, :first_name, :last_name, :email, :password)
+        params.require(:user).permit(:username, :first_name, :last_name, :email, :password, :password_confirmation)
     end 
 end
