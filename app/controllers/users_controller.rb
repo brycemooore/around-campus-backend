@@ -6,10 +6,17 @@ class UsersController < ApplicationController
         user = User.new(user_params)
         user.school_id = params[:school_id]
         if user.save
-            render json: user, status: :ok
+            token=encode_jwt({user_id: user.id, username: user.username})
+            render json: {user: user, jwt: token}, status: :accepted
         else 
+             byebug
             render json: user.errors, status: :not_acceptable
         end 
+    end 
+
+    def anything 
+        byebug
+        render json: "hello"
     end 
 
 

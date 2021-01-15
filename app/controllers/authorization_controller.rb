@@ -7,8 +7,8 @@ class AuthorizationController < ApplicationController
         # byebug
         if @user && @user.authenticate(user_login_params[:password])
             token=encode_jwt({user_id: @user.id, username: @username})
-            cookies.signed[:jwt] = {value:  token, httponly: true}
-            render json: {user: @user.username, uid: @user.id}, status: :accepted
+            jwt = {value: token, httponly: true}
+            render json: {user: @user.username, uid: @user.id, jwt: jwt}, status: :accepted
         else
             errors = {}
         
@@ -22,10 +22,10 @@ class AuthorizationController < ApplicationController
          end
     end         
 
-    def destroy
-        cookies.delete(:jwt)
-        render json: {message: "cookie destroyed!"}, status: :unauthorized
-    end
+    # def destroy
+    #     cookies.delete(:jwt)
+    #     render json: {message: "cookie destroyed!"}, status: :unauthorized
+    # end
 
     private
 

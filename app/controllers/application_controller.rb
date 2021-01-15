@@ -7,6 +7,7 @@ class ApplicationController < ActionController::API
 
     def encode_jwt(encodable)
         # encode the info and return
+        puts "in here"
         JWT.encode(encodable, Rails.application.secrets.secret_key_base)
     end
 
@@ -35,7 +36,7 @@ class ApplicationController < ActionController::API
 
     def current_user
         if decode_jwt(cookies.signed[:jwt])
-            user_id=decode_jwt(cookies.signed[:jwt])
+            user_id=decode_jwt(params[:jwt])
             # decode_jwt[0]['user_id']
             
             return @user=User.find_by(id: user_id)
@@ -48,7 +49,7 @@ class ApplicationController < ActionController::API
 
     def authenticate_user
         # byebug
-        jwt = cookies.signed[:jwt]
+        jwt = params[:jwt]
         decode_jwt(jwt)
     end
 
