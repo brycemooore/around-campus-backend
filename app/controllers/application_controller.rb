@@ -1,64 +1,40 @@
 class ApplicationController < ActionController::API
-
-    include ::ActionController::Cookies
-    before_action :authenticate_user
-    #before_action :require_login
-
-
-    def encode_jwt(encodable)
-        # encode the info and return
-        puts "in here"
-        JWT.encode(encodable, Rails.application.secrets.secret_key_base)
-    end
-
-    def auth_header
-        request.headers['Authorization']
-    end
-
-    def decode_jwt(jwt)
-        #check the headers in post for jwt
-        # byebug
-        if auth_header  
-            # token = cookies.signed[:jwt]
-            # auth_header.split(' ')[1]
-            begin
-                # decode the token, return the decoded part
-                JWT.decode(jwt, Rails.application.secrets.secret_key_base, true, algorithm: 'HS256')
-            rescue JWT::DecodeError 
-                # byebug 
-                render json: {message: "NOPE!!!! Really no!"}, status: :unauthorized
-
-                nil
-            end
-        end
-    end
-
-
-    def current_user
-        if decode_jwt(cookies.signed[:jwt])
-            user_id=decode_jwt(params[:jwt])
-            # decode_jwt[0]['user_id']
-            
-            return @user=User.find_by(id: user_id)
-        end
-    end
-
-    def logged_in?
-        !!current_user
-    end
-
-    def authenticate_user
-        # byebug
-        jwt = params[:jwt]
-        decode_jwt(jwt)
-    end
-
-
-    private
+    before_action :authorized
   
-    def require_login
-      unless logged_in?
-        render json: {error: "I'm pretty sure you're logged in.  This should be working.  Why isn't this working?  Log in harder."}
-      end 
+    def encode_token(payload)
+      # should store secret in env variable
+      JWT.encode(payload, Rails.application.secrets.secret_key_base, "HS256")
     end
-end
+  
+    def auth_header
+      # { Authorization: 'Bearer <token>' }
+      request.headers["Authorization"]
+    end
+  
+    def decoded_token
+      if auth_header
+        token = auth_header.split(" ")[1]
+        # header: { 'Authorization': 'Bearer <token>' }
+        begin
+          JWT.decode(token, Rails.application.secrets.secret_key_base, true, algorithm: "HS256")
+        rescue JWT::DecodeError
+          nil
+        end
+      end
+    end
+  
+    def current_user
+      if decoded_token
+        user_id = decoded_token[0]["user_id"]
+        @user = User.find_by(id: user_id)
+      end
+    end
+  
+    def logged_in?
+      !!current_user
+    end
+  
+    def authorized
+      render json: { message: "Please log in" }, status: :unauthorized unless logged_in?
+    end
+  end
