@@ -18,6 +18,7 @@ class PostsController < ApplicationController
                 posts << post
             end
         end
+        posts = posts.sort { |a,b| b.created_at <=> a.created_at }
         render json: posts, status: :ok
     end
 
