@@ -7,5 +7,6 @@ Rails.application.routes.draw do
   get '/posts', to: 'posts#index_by_school'
   get '/conversations', to: 'conversations#index'
   post '/messages', to: 'messages#create'
+  get '/conversations/:id', to: 'conversations#show'
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 end
