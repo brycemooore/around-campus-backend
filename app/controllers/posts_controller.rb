@@ -22,6 +22,14 @@ class PostsController < ApplicationController
         render json: posts, status: :ok
     end
 
+    def destroy
+        if Post.destroy(params[:id])
+            render status: :ok
+        else 
+            render status: :not_acceptable
+        end 
+    end
+
 
     def post_params
         params.require(:post).permit(:title, :user_id, :body)
