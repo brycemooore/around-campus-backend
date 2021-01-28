@@ -14,3 +14,9 @@
 # 10.times do 
 #     Message.create(user_id: x.sample, conversation_id: con.id, body: y.sample)
 # end 
+
+School.create(name: 'University of Virginia', location: 'Charlottesville')
+School.create(name: 'George Mason', location: 'Fairfax')
+School.create(name: 'Virgina Commonwealth University', location: 'Richmond')
+School.create(name: 'Christoher Newport University', location: 'Norfolk')
+School.create(name: 'Old Dominion University', location: 'Norfolk')
